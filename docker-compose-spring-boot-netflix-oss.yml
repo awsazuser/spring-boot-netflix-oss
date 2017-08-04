@@ -1,0 +1,41 @@
+version: "3"
+services:
+  servicediscover:
+    image: eurekaservice:latest
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    ports:
+    - "8761:8761"
+    networks:
+      - springnw
+  osinfo:
+    image: eurekaclient1:latest
+    deploy:
+      replicas: 5
+      placement:
+        constraints: [node.role != manager]
+    hostname: spark-master
+    networks:
+      - springnw
+  jinfo:
+    image: eurekaclient2:latest
+    deploy:
+      replicas: 5
+      placement:
+        constraints: [node.role != manager]
+    networks:
+      - springnw
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8092:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - springnw
+networks:
+  springnw:
