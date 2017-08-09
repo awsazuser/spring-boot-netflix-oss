@@ -1,0 +1,29 @@
+ROM centos:latest
+MAINTAINER testing
+
+USER root
+
+# install dev tools
+RUN yum clean all; \
+    rpm --rebuilddb; \
+    yum install -y wget curl which unzip git
+
+
+RUN cd
+
+RUN yum -y install wget
+RUN yum -y install unzip
+RUN yum -y install git
+
+RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u141-b15/336fa29ff2bb4ef291e347e091f7f4a7/jdk-8u141-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie'
+RUN wget http://mirrors.gigenet.com/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.zip
+
+RUN rpm -ivh jdk-8u141-linux-x64.rpm
+
+RUN unzip apache-maven-3.5.0-bin.zip
+RUN mv apache-maven-3.5.0 apache-maven
+ENV PATH /apache-maven/bin:$PATH
+ENV JAVA_HOME /usr/java/jdk1.8.0_141
+ENV PATH $JAVA_HOME/bin:$PATH
+
+CMD ["/bin/bash"]
