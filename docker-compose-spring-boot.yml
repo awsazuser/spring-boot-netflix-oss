@@ -1,0 +1,53 @@
+version: "3"
+services:
+  servicediscover:
+    image: awsazuser/eurekaservice:latest
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    ports:
+    - "8761:8761"
+    networks:
+      - springnw
+  osinfo:
+    image: awsazuser/eurekaclient1:latest
+    deploy:
+      replicas: 2
+      placement:
+        constraints: [node.role != manager]
+    ports:
+    - "8092:8092"
+    hostname: spark-master
+    networks:
+      - springnw
+  jinfo:
+    image: awsazuser/eurekaclient2:latest
+    deploy:
+      replicas: 2
+      placement:
+        constraints: [node.role != manager]
+    ports:
+    - "8091:8091"
+    networks:
+      - springnw
+  gateway:
+    image: awsazuser/zuul:latest
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - springnw
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8099:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - springnw
+networks:
+  springnw:
+
